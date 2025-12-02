@@ -12,6 +12,7 @@ namespace pcpp
 
 	uint32_t IPReassemblyHashPacket(IPv4Layer* ipv4Layer)
 	{
+		// 三个buffer，分别是源IP地址，目的IP地址，IP ID
 		ScalarBuffer<uint8_t> vec[3];
 
 		vec[0].buffer = reinterpret_cast<uint8_t*>(&ipv4Layer->getIPv4Header()->ipSrc);
@@ -24,6 +25,7 @@ namespace pcpp
 		return pcpp::fnvHash(vec, 3);
 	}
 
+	// 计算ipv4地址 + ipID 的分片hash值
 	uint32_t IPReassemblyHashBy3Tuple(const IPv4Address& ipSrc, const IPv4Address& ipDst, uint16_t ipID)
 	{
 		ScalarBuffer<uint8_t> vec[3];

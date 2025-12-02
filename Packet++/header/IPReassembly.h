@@ -310,8 +310,12 @@ namespace pcpp
 		/// @param[in] onFragmentsCleanCallback The callback to be called when packets are dropped due to capacity
 		/// limit. Please read more about capacity limit in IPReassembly.h file description. This parameter is optional,
 		/// default value is nullptr (no callback)
+		/// onFragmentsCleanCallback 用于当由于容量限制而丢弃数据包时调用的回调函数
+
 		/// @param[in] callbackUserCookie A pointer to an object provided by the user. This pointer will be returned
 		/// when invoking the onFragmentsCleanCallback. This parameter is optional, default cookie is nullptr
+		/// callbackUserCookie 用户提供的对象指针。当调用 onFragmentsCleanCallback 时将返回此指针
+
 		/// @param[in] maxPacketsToStore Set the capacity limit of the IP reassembly mechanism. Default capacity is
 		/// #PCPP_IP_REASSEMBLY_DEFAULT_MAX_PACKETS_TO_STORE
 		explicit IPReassembly(OnFragmentsClean onFragmentsCleanCallback = nullptr, void* callbackUserCookie = nullptr,
@@ -345,12 +349,18 @@ namespace pcpp
 		/// performance impact and memory consumption of parsing the whole packet. Note that setting this to a protocol
 		/// which doesn't include the IP-Layer will result in IPReassembly not finding the IP-Layer and thus failing to
 		/// work properly. Default value is ::UnknownProtocol which means don't take this parameter into account
+		/// 可选参数，解析重组后的数据包，直到达到某个协议（包括该协议）。当您只需要解析到某个特定层并希望避免解析整个数据包的性能影响和内存消耗时，这会很有用。请注意，将此设置为不包含 IP 层的协议将导致 IPReassembly 无法找到 IP 层，从而无法正常工作。默认值为 ::UnknownProtocol，表示不考虑此参数
+		/// 假设你只需要分析IP和TCP层的头信息（比如做流量统计、端口分析），而不关心传输的实际内容。你可以将 parseUntil 设置为 TCP。这样，解析器在处理到TCP层后就会停止，不会再去费力地解析可能很大的HTTP报文主体，从而显著提高处理速度。
+
 		/// @param[in] parseUntilLayer Optional parameter. Parse the reassembled packet until you reach a certain layer
 		/// in the OSI model (inclusive). Can be useful for cases when you need to parse only up to a certain OSI layer
 		/// (for example transport layer) and want to avoid the performance impact and memory consumption of parsing the
 		/// whole packet. Note that setting this value to OsiModelPhysicalLayer will result in IPReassembly not finding
 		/// the IP-layer and thus failing to work properly. Default value is ::OsiModelLayerUnknown which means don't
 		/// take this parameter into account
+		/// 可选参数，解析重组后的数据包，直到达到 OSI 模型中的某个层（包括该层）。当您只需要解析到某个特定的 OSI 层（例如传输层）并希望避免解析整个数据包的性能影响和内存消耗时，这会很有用。请注意，将此值设置为 OsiModelPhysicalLayer 将导致 IPReassembly 无法找到 IP 层，从而无法正常工作。默认值为 ::OsiModelLayerUnknown，表示不考虑此参数
+		/// 设置解析到OSI某些某一层，可以避免不必要的解析开销。例如，如果你只关心传输层的信息（如TCP/UDP端口），可以将 parseUntilLayer 设置为 OsiModelTransportLayer。这样，解析器在处理到传输层后就会停止，不会再去费力地解析更高层（如会话层、表示层、应用层）的数据，从而显著提高处理速度。
+
 		/// @return
 		/// - If the input fragment isn't an IPv4/IPv6 packet or if it isn't an IPv4/IPv6 fragment, the return value is
 		/// a
@@ -430,6 +440,7 @@ namespace pcpp
 		}
 
 	private:
+		// IP 分片结构体
 		struct IPFragment
 		{
 			uint16_t fragmentOffset;
@@ -449,6 +460,7 @@ namespace pcpp
 			}
 		};
 
+		// IPFragmentData存储每个正在重组的IP数据包的信息
 		struct IPFragmentData
 		{
 			uint16_t currentOffset;

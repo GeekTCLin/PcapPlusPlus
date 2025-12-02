@@ -20,6 +20,7 @@ namespace pcpp
 	/// head of the list as the most recently used element (if the element was already in the list it advances to the
 	/// head of the list). The last element in the list is the one least recently used and will be pulled out of the
 	/// list if it reaches its max size and a new element comes in. All actions on this LRU list are O(1)
+	/// LRUList 是一个实现了有限大小的 LRU 缓存的模板类。每次用户放入一个元素时，它都会作为最近使用的元素进入列表的头部（如果该元素已经在列表中，则会前进到列表的头部）。列表中的最后一个元素是最少使用的元素，如果它达到最大大小并且有一个新元素进来，它将被拉出列表。对此 LRU 列表的所有操作都是 O(1)
 	template <typename T> class LRUList
 	{
 	public:

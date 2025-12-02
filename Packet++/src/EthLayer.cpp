@@ -19,7 +19,8 @@ namespace pcpp
 		m_DataLen = headerLen;
 		m_Data = new uint8_t[headerLen];
 		memset(m_Data, 0, headerLen);
-
+		
+		// 实际为向m_Data 写入数据
 		ether_header* ethHdr = getEthHeader();
 		destMac.copyTo(ethHdr->dstMac);
 		sourceMac.copyTo(ethHdr->srcMac);
